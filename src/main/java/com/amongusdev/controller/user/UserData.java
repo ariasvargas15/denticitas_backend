@@ -1,4 +1,4 @@
-package com.amongusdev.models.user;
+package com.amongusdev.controller.user;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;

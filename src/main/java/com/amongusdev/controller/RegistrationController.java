@@ -1,25 +1,24 @@
 package com.amongusdev.controller;
 
+import com.amongusdev.controller.user.UserData;
+import com.amongusdev.controller.user.UserService;
 import com.amongusdev.exception.GenericResponse;
 import com.amongusdev.exception.UserAlreadyExistException;
 import com.amongusdev.models.Cliente;
 import com.amongusdev.models.Especialista;
 import com.amongusdev.models.Persona;
-import com.amongusdev.models.user.UserData;
-import com.amongusdev.models.user.UserService;
 import com.amongusdev.repositories.ClienteRepository;
 import com.amongusdev.repositories.EspecialistaRepository;
-import static com.amongusdev.utils.Defines.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import static com.amongusdev.utils.Defines.*;
+
 @RestController
-@RequestMapping("/registro")
 public class RegistrationController {
     @Autowired
     private UserService userService;
@@ -28,7 +27,7 @@ public class RegistrationController {
     @Autowired
     private EspecialistaRepository especialistaRepository;
 
-    @PostMapping
+    @PostMapping("/registro")
     public GenericResponse registerUserAccount(@Valid UserData userData) {
         try {
             if (userData.getTipo().equals("cliente")) {
@@ -50,5 +49,15 @@ public class RegistrationController {
         }
 
         return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+    }
+
+    @PostMapping("/login")
+    public GenericResponse login(@Valid UserData userData) {
+        boolean res = userService.login(userData);
+        if (res) {
+            return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+        } else {
+            return new GenericResponse(FAILED.getSecond(), FAILED.getFirst());
+        }
     }
 }

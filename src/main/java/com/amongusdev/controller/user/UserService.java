@@ -1,4 +1,4 @@
-package com.amongusdev.models.user;
+package com.amongusdev.controller.user;
 
 import com.amongusdev.exception.UnknownIdentifierException;
 import com.amongusdev.exception.UserAlreadyExistException;
@@ -12,4 +12,6 @@ public interface UserService {
     void sendRegistrationConfirmationEmail(final Persona user);
 
     Persona getUserById(final String id) throws UnknownIdentifierException;
+
+    boolean login(final UserData user);
 }
