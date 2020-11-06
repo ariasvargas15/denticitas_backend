@@ -15,5 +15,6 @@ public class Defines {
     public static final Pair<Integer, String> AREA_NOT_FOUND            = Pair.of(7, "Esta area de especialización no se encuentra registrada");
     public static final Pair<Integer, String> CITA_NOT_FOUND            = Pair.of(8, "Esta cita no se encuentra registrada");
     public static final Pair<Integer, String> SERVICE_NOT_FOUND         = Pair.of(9, "Este servicio no se encuentra registrado");
+    public static final Pair<Integer, String> FALTAN_DATOS              = Pair.of(10, "Faltan datos");
 
 }

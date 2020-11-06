@@ -5,7 +5,10 @@
  */
 package com.amongusdev.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -33,6 +36,8 @@ public class AreaEspecializacion implements Serializable {
             @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula")})
     @ManyToMany
     private List<Especialista> especialistaList;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "areaId")
     private List<Servicio> servicioList;
 

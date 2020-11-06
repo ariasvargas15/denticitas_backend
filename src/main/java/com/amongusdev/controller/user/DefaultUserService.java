@@ -65,17 +65,17 @@ public class DefaultUserService implements UserService {
         boolean res = true;
         switch (tipo) {
             case "cliente":
-                if (!(p.getTipoPersona() instanceof Cliente)) {
+                if (!(p.obtenerTipoPersona() instanceof Cliente)) {
                     res = false;
                 }
                 break;
             case "especialista":
-                if (!(p.getTipoPersona() instanceof Especialista)) {
+                if (!(p.obtenerTipoPersona() instanceof Especialista)) {
                     res = false;
                 }
                 break;
             case "admin":
-                if (!(p.getTipoPersona() instanceof Administrador)) {
+                if (!(p.obtenerTipoPersona() instanceof Administrador)) {
                     res = false;
                 }
                 break;

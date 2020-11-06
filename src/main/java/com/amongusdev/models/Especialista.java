@@ -27,7 +27,7 @@ public class Especialista implements Serializable {
     @ManyToMany(mappedBy = "especialistaList")
     private List<AreaEspecializacion> areaEspecializacionList;
     @JoinColumn(name = "cedula", referencedColumnName = "cedula", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     private Persona persona;
     @OneToMany(mappedBy = "especialistaCedula")
     private List<Agenda> agendaList;

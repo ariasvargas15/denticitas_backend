@@ -59,7 +59,7 @@ public class Persona implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
     private Especialista especialista;
 
-    public Object getTipoPersona(){
+    public Object obtenerTipoPersona(){
         if(cliente!=null) return cliente;
         if(especialista!=null) return especialista;
         if(administrador!=null) return administrador;
