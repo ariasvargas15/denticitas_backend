@@ -1,5 +1,6 @@
 package com.amongusdev.controller.user;
 
+import com.amongusdev.controller.requestdata.PersonaData;
 import com.amongusdev.exception.UnknownIdentifierException;
 import com.amongusdev.exception.UserAlreadyExistException;
 import com.amongusdev.models.Administrador;
@@ -92,5 +93,60 @@ public class DefaultUserService implements UserService {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    public boolean partialUpdateUser(String cedula, PersonaData personaData){
+        Persona persona = personaRepository.findOne(cedula);
+
+        if(persona == null){
+            return false;
+        } else{
+            if(personaData.getNombre() != null)
+                persona.setNombre(personaData.getNombre());
+
+            if(personaData.getApellido() != null)
+                persona.setApellido(personaData.getApellido());
+
+            if(personaData.getFechaNacimiento() != null)
+                persona.setFechaNacimiento(personaData.getFechaNacimiento());
+
+            if(personaData.getTelefono() != null)
+                persona.setTelefono(personaData.getTelefono());
+
+            if(personaData.getDireccion() != null)
+                persona.setDireccion(personaData.getDireccion());
+
+            if(personaData.getEmail() != null)
+                persona.setEmail(personaData.getEmail());
+
+            if(personaData.getPassword() != null)
+                persona.setPassword(passwordEncoder().encode(personaData.getPassword()));
+
+            if(personaData.getCedula() != null){
+                persona.setCedula(personaData.getCedula());
+                personaRepository.delete(cedula);
+            }
+            personaRepository.save(persona);
+            return true;
+        }
+    }
+
+    private boolean validarDatosPut(PersonaData personaData){
+        return personaData.getNombre() != null && personaData.getApellido() != null &&
+                personaData.getFechaNacimiento() != null && personaData.getTelefono() != null &&
+                personaData.getDireccion() != null && personaData.getEmail() != null && personaData.getPassword() != null;
+    }
+
+    public boolean updateUser(String cedula, PersonaData personaData){
+        if(validarDatosPut(personaData)){
+            Persona persona = personaRepository.findOne(cedula);
+            BeanUtils.copyProperties(personaData, persona);
+            persona.setCedula(cedula);
+            persona.setPassword(passwordEncoder().encode(personaData.getPassword()));
+            personaRepository.save(persona);
+            return true;
+        } else{
+            return false;
+        }
     }
 }
