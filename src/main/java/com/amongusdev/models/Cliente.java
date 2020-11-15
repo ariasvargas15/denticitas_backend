@@ -5,7 +5,10 @@
  */
 package com.amongusdev.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,6 +32,8 @@ public class Cliente implements Serializable {
     @JoinColumn(name = "cedula", referencedColumnName = "cedula", insertable = false, updatable = false)
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private Persona persona;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clienteCedula")
     private List<Cita> citaList;
 
