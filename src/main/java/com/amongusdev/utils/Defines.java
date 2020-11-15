@@ -17,4 +17,5 @@ public class Defines {
     public static final Pair<Integer, String> SERVICE_NOT_FOUND         = Pair.of(9, "Este servicio no se encuentra registrado");
     public static final Pair<Integer, String> FALTAN_DATOS              = Pair.of(10, "Faltan datos");
     public static final Pair<Integer, String> DATOS_ASOCIADOS_AREA      = Pair.of(11, "Existen servicios o especialistas asociados al area");
+    public static final Pair<Integer, String> TURNO_ALREADY_EXISTS      = Pair.of(12, "El turno ya existe");
 }

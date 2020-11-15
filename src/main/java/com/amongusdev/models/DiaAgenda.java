@@ -21,6 +21,7 @@ public class DiaAgenda implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
@@ -31,5 +32,14 @@ public class DiaAgenda implements Serializable {
     private Agenda agendaId;
     @OneToMany(mappedBy = "diaAgendaId")
     private List<Turno> turnoList;
+
+    public DiaAgenda(){
+
+    }
+
+    public DiaAgenda(int dia, Agenda agendaId){
+        this.dia = dia;
+        this.agendaId = agendaId;
+    }
 
 }

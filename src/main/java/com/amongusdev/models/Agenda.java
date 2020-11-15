@@ -21,6 +21,7 @@ public class Agenda implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
@@ -33,4 +34,14 @@ public class Agenda implements Serializable {
     @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula")
     @ManyToOne
     private Especialista especialistaCedula;
+
+    public Agenda(){
+
+    }
+
+    public Agenda(int mes, int anio, Especialista especialista){
+        this.mes = mes;
+        this.anio = anio;
+        this.especialistaCedula = especialista;
+    }
 }

@@ -9,7 +9,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,12 +21,12 @@ public class Turno implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
     @Column(name = "hora_inicio")
-    @Temporal(TemporalType.TIME)
-    private Date horaInicio;
+    private String horaInicio;
     @Column(name = "duracion")
     private Integer duracion;
     @JoinColumn(name = "dia_agenda_id", referencedColumnName = "id")
@@ -35,4 +34,14 @@ public class Turno implements Serializable {
     private DiaAgenda diaAgendaId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "turnoId")
     private List<Cita> citaList;
+
+    public Turno(){
+
+    }
+
+    public Turno(String horaInicio, int duracion, DiaAgenda diaAgenda){
+        this.horaInicio = horaInicio;
+        this.duracion = duracion;
+        this.diaAgendaId = diaAgenda;
+    }
 }
