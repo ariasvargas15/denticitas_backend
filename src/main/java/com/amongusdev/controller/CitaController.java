@@ -35,4 +35,14 @@ public class CitaController {
             return new ResponseEntity<>(new GenericResponse(CITA_NOT_FOUND.getSecond(), CITA_NOT_FOUND.getFirst()), HttpStatus.OK);
         }
     }
+    //Cristian
+    @GetMapping("/{cedula}")
+    public ResponseEntity<Object> getCitaByCedula(@PathVariable String cedula){
+        List<Cita> cita = citaRepository.findByCedula(cedula);
+        if (cita != null) {
+            return new ResponseEntity<>(cita, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new GenericResponse(CITA_NOT_FOUND.getSecond(), CITA_NOT_FOUND.getFirst()), HttpStatus.OK);
+        }
+    }
 }

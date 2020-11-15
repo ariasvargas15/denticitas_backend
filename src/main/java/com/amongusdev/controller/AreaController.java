@@ -3,6 +3,7 @@ package com.amongusdev.controller;
 import com.amongusdev.controller.requestdata.AreaData;
 import com.amongusdev.exception.GenericResponse;
 import com.amongusdev.models.AreaEspecializacion;
+import com.amongusdev.models.Especialista;
 import com.amongusdev.repositories.AreaEspecializacionRepository;
 import com.amongusdev.repositories.EspecialistaRepository;
 import com.amongusdev.repositories.ServicioRepository;
@@ -120,4 +121,16 @@ public class AreaController {
             return new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
         }
     }
+
+    //Cristian
+    @RequestMapping(value ="{/id}")
+    public ResponseEntity<Object> especialistaEnEsaArea(@PathVariable int id){
+        AreaEspecializacion area = areaEspecializacionRepository.findOne(id);
+        if (area != null) {
+            return new ResponseEntity<>(area.getEspecialistaList(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new GenericResponse(AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst()), HttpStatus.OK);
+        }
+    }
+
 }
