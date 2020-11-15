@@ -3,7 +3,6 @@ package com.amongusdev.controller;
 import com.amongusdev.controller.requestdata.ClienteData;
 import com.amongusdev.controller.user.UserService;
 import com.amongusdev.exception.GenericResponse;
-import com.amongusdev.exception.UnknownIdentifierException;
 import com.amongusdev.models.Cliente;
 import com.amongusdev.repositories.ClienteRepository;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static com.amongusdev.utils.Defines.*;
@@ -44,27 +42,27 @@ public class ClienteController {
 
     @DeleteMapping("/{cedula}")
     @ApiOperation(value = "Eliminar Cliente", notes = "Se verifica si el cliente existe y si es el caso lo elimina.")
-    public GenericResponse deleteCliente(@PathVariable String cedula){
+    public GenericResponse deleteCliente(@PathVariable String cedula) {
         Cliente cliente = clienteRepository.findOne(cedula);
-        if(cliente != null){
+        if (cliente != null) {
             clienteRepository.delete(cedula);
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
-        } else{
+        } else {
             return new GenericResponse(FAILED.getSecond(), CUSTOMER_NOT_FOUND.getSecond(), CUSTOMER_NOT_FOUND.getFirst());
         }
     }
 
     @PatchMapping("/{cedula}")
     @ApiOperation(value = "Actualizar parcialmente un cliente", notes = "Actualiza algunos campos especificados de un cliente")
-    public GenericResponse partialUpdateCliente(@PathVariable String cedula, @Valid ClienteData clienteData){
+    public GenericResponse partialUpdateCliente(@PathVariable String cedula, @RequestBody ClienteData clienteData) {
         Cliente cliente = clienteRepository.findOne(cedula);
-        if(cliente == null){
+        if (cliente == null) {
             return new GenericResponse(FAILED.getSecond(), CUSTOMER_NOT_FOUND.getSecond(), CUSTOMER_NOT_FOUND.getFirst());
-        } else{
-            if(clienteData.getOcupacion() != null)
+        } else {
+            if (clienteData.getOcupacion() != null)
                 cliente.setOcupacion(clienteData.getOcupacion());
 
-            if(clienteData.getPersona().getCedula() != null)
+            if (clienteData.getPersona().getCedula() != null)
                 cliente.setCedula(clienteData.getPersona().getCedula());
 
             userService.partialUpdateUser(cedula, clienteData.getPersona());
@@ -75,24 +73,24 @@ public class ClienteController {
         }
     }
 
-    private boolean verificarDatosPut(ClienteData clienteData){
+    private boolean verificarDatosPut(ClienteData clienteData) {
         return clienteData.getOcupacion() != null && clienteData.getPersona() != null;
     }
 
     @PutMapping("/{cedula}")
     @ApiOperation(value = "Actualizar un cliente", notes = "Actualiza todos los campos de un cliente")
-    public GenericResponse updateCliente(@PathVariable String cedula, @Valid ClienteData clienteData){
+    public GenericResponse updateCliente(@PathVariable String cedula, @RequestBody ClienteData clienteData) {
         Cliente cliente = clienteRepository.findOne(cedula);
-        if(cliente == null){
+        if (cliente == null) {
             return new GenericResponse(FAILED.getSecond(), CUSTOMER_NOT_FOUND.getSecond(), CUSTOMER_NOT_FOUND.getFirst());
-        } else{
-            if(verificarDatosPut(clienteData)){
+        } else {
+            if (verificarDatosPut(clienteData)) {
                 cliente.setOcupacion(clienteData.getOcupacion());
-                if(userService.updateUser(cedula, clienteData.getPersona()))
+                if (userService.updateUser(cedula, clienteData.getPersona()))
                     return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
                 else
                     return new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
-            } else{
+            } else {
                 return new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
             }
         }

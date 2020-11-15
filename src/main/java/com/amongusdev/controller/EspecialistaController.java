@@ -36,12 +36,12 @@ public class EspecialistaController {
 
     @DeleteMapping("/{cedula}")
     @ApiOperation(value = "Eliminar especialista", notes = "Verifica si existe el especialista y si es dado el caso lo elimina.")
-    public GenericResponse deleteEspecialista(@PathVariable String cedula){
+    public GenericResponse deleteEspecialista(@PathVariable String cedula) {
         Especialista especialista = especialistaRepository.findOne(cedula);
-        if(especialista != null){
+        if (especialista != null) {
             especialistaRepository.delete(cedula);
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
-        } else{
+        } else {
             return new GenericResponse(FAILED.getSecond(), ESPECIALIST_NOT_FOUND.getSecond(), ESPECIALIST_NOT_FOUND.getFirst());
         }
     }

@@ -12,9 +12,8 @@ import com.amongusdev.repositories.EspecialistaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 import static com.amongusdev.utils.Defines.*;
 
@@ -28,7 +27,7 @@ public class RegistrationController {
     private EspecialistaRepository especialistaRepository;
 
     @PostMapping("/registro")
-    public GenericResponse registerUserAccount(@Valid UserData userData) {
+    public GenericResponse registerUserAccount(@RequestBody UserData userData) {
         try {
             if (userData.getTipo().equals("cliente")) {
                 Persona p = userService.register(userData);
@@ -52,7 +51,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/login")
-    public GenericResponse login(@Valid UserData userData) {
+    public GenericResponse login(@RequestBody UserData userData) {
         boolean res = userService.login(userData);
         if (res) {
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());

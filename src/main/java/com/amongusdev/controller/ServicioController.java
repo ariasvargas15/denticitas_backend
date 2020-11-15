@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static com.amongusdev.utils.Defines.*;
@@ -42,13 +41,13 @@ public class ServicioController {
         }
     }
 
-    private boolean validarDatosPost(Servicio servicio){
+    private boolean validarDatosPost(Servicio servicio) {
         return servicio.getNombre() != null && servicio.getPrecio() != 0 && servicio.getAreaId() != null;
     }
 
     @PostMapping()
     @ApiOperation(value = "Crear un servicio", notes = "Se crea un servicio especificando los respectivos campos del mismo")
-    public GenericResponse createServicio(@Valid ServicioData servicioData){
+    public GenericResponse createServicio(@RequestBody ServicioData servicioData) {
         Servicio servicio = new Servicio();
         BeanUtils.copyProperties(servicioData, servicio);
         servicio.setAreaId(areaEspecializacionRepository.findOne(servicioData.getAreaId()));
@@ -63,9 +62,9 @@ public class ServicioController {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Eliminar un servicio", notes = "Se verifica si el servicio existe y si existe se elimina")
-    public GenericResponse deleteServicio(@PathVariable int id){
+    public GenericResponse deleteServicio(@PathVariable int id) {
         Servicio servicio = servicioRepository.findOne(id);
-        if(servicio != null){
+        if (servicio != null) {
             servicioRepository.delete(id);
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
         } else {
@@ -75,25 +74,25 @@ public class ServicioController {
 
     @PatchMapping("{id}")
     @ApiOperation(value = "Actualizar un servicio parcialmente", notes = "Actualiza algunos campos especificados de un servicio")
-    public GenericResponse partialUpdateServicio(@PathVariable int id, @Valid ServicioData servicioData){
+    public GenericResponse partialUpdateServicio(@PathVariable int id, @RequestBody ServicioData servicioData) {
         Servicio servicio = servicioRepository.findOne(id);
 
-        if(servicio == null){
+        if (servicio == null) {
             return new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
-        } else{
-            if(servicioData.getNombre() != null)
+        } else {
+            if (servicioData.getNombre() != null)
                 servicio.setNombre(servicioData.getNombre());
 
-            if(servicioData.getDescripcion() != null)
+            if (servicioData.getDescripcion() != null)
                 servicio.setDescripcion(servicioData.getDescripcion());
 
-            if(servicioData.getImagen() != null)
+            if (servicioData.getImagen() != null)
                 servicio.setImagen(servicioData.getImagen());
 
-            if(servicioData.getAreaId() != 0)
+            if (servicioData.getAreaId() != 0)
                 servicio.setAreaId(areaEspecializacionRepository.findOne(servicioData.getAreaId()));
 
-            if(servicioData.getPrecio() != 0)
+            if (servicioData.getPrecio() != 0)
                 servicio.setPrecio(servicioData.getPrecio());
 
             servicioRepository.save(servicio);
@@ -101,25 +100,25 @@ public class ServicioController {
         }
     }
 
-    private boolean validarDatosPut(ServicioData servicio){
+    private boolean validarDatosPut(ServicioData servicio) {
         return servicio.getNombre() != null && servicio.getDescripcion() != null && servicio.getImagen() != null && servicio.getAreaId() != 0 && servicio.getPrecio() != 0;
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "Actualizar un servicio", notes = "Actualiza todos los campos de un servicio")
-    public GenericResponse updateServicio(@PathVariable int id, @Valid ServicioData servicioData){
-        if(!validarDatosPut(servicioData)){
-            return new GenericResponse(FAILED.getSecond(),FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
-        }else{
+    public GenericResponse updateServicio(@PathVariable int id, @RequestBody ServicioData servicioData) {
+        if (!validarDatosPut(servicioData)) {
+            return new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
+        } else {
             Servicio servicio = servicioRepository.findOne(id);
-            if(servicio == null){
+            if (servicio == null) {
                 return new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
-            } else{
+            } else {
                 BeanUtils.copyProperties(servicioData, servicio);
                 AreaEspecializacion area = areaEspecializacionRepository.findOne(servicioData.getAreaId());
-                if(area == null){
+                if (area == null) {
                     return new GenericResponse(FAILED.getSecond(), AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst());
-                }else{
+                } else {
                     servicio.setAreaId(area);
                     servicioRepository.save(servicio);
                     return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
