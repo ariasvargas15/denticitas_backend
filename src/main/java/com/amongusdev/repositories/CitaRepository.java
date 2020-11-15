@@ -16,5 +16,5 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     Cita buscarCitaPorTurno(int turnoId);
 
     @Query(value = "SELECT * FROM cita WHERE cliente_cedula = ?1", nativeQuery = true)
-    List<Cita> buscarCitaCliente(String clienteCedula);
+    List<Cita> findByCliente(String clienteCedula);
 }

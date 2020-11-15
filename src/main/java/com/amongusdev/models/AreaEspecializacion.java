@@ -35,6 +35,8 @@ public class AreaEspecializacion implements Serializable {
     @JoinTable(name = "especialista_has_area_especializacion", joinColumns = {
             @JoinColumn(name = "area_id", referencedColumnName = "id")}, inverseJoinColumns = {
             @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula")})
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @ManyToMany
     private List<Especialista> especialistaList;
     @Getter(AccessLevel.NONE)

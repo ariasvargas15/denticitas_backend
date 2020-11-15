@@ -27,8 +27,13 @@ public class ServicioController {
     AreaEspecializacionRepository areaEspecializacionRepository;
 
     @GetMapping
-    public List<Servicio> listarServicios() {
-        return servicioRepository.findAll();
+    public ResponseEntity<Object> listarServicios() {
+        List<Servicio> servicios = servicioRepository.findAll();
+
+        if(servicios.size() != 0)
+            return new ResponseEntity<>(servicios, HttpStatus.OK);
+
+        return new ResponseEntity<>(new GenericResponse(FAILED.getSecond(), NO_SERVICES.getSecond(), NO_SERVICES.getFirst()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -37,27 +42,34 @@ public class ServicioController {
         if (servicio != null) {
             return new ResponseEntity<>(servicio, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new GenericResponse(AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst()), HttpStatus.OK);
+            return new ResponseEntity<>(new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst()), HttpStatus.OK);
         }
     }
 
-    private boolean validarDatosPost(Servicio servicio) {
-        return servicio.getNombre() != null && servicio.getPrecio() != 0 && servicio.getAreaId() != null;
+    private boolean validarDatosPost(ServicioData servicioData) {
+        return servicioData.getNombre() != null && servicioData.getPrecio() != 0 && servicioData.getAreaId() != 0;
     }
 
     @PostMapping()
     @ApiOperation(value = "Crear un servicio", notes = "Se crea un servicio especificando los respectivos campos del mismo")
     public GenericResponse createServicio(@RequestBody ServicioData servicioData) {
+        GenericResponse respuesta;
         Servicio servicio = new Servicio();
-        BeanUtils.copyProperties(servicioData, servicio);
-        servicio.setAreaId(areaEspecializacionRepository.findOne(servicioData.getAreaId()));
 
-        if (validarDatosPost(servicio)) {
-            servicioRepository.save(servicio);
-            return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+        if (validarDatosPost(servicioData)) {
+            BeanUtils.copyProperties(servicioData, servicio);
+            servicio.setAreaId(areaEspecializacionRepository.findOne(servicioData.getAreaId()));
+            if(servicio.getAreaId() == null){
+                respuesta = new GenericResponse(FAILED.getSecond(), AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst());
+            } else{
+                servicioRepository.save(servicio);
+                respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+            }
         } else {
-            return new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
+            respuesta = new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
         }
+
+        return respuesta;
     }
 
     @DeleteMapping("/{id}")
@@ -91,6 +103,8 @@ public class ServicioController {
 
             if (servicioData.getAreaId() != 0)
                 servicio.setAreaId(areaEspecializacionRepository.findOne(servicioData.getAreaId()));
+                if(servicio.getAreaId() == null)
+                    return new GenericResponse(FAILED.getSecond(), AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst());
 
             if (servicioData.getPrecio() != 0)
                 servicio.setPrecio(servicioData.getPrecio());
@@ -107,23 +121,26 @@ public class ServicioController {
     @PutMapping("/{id}")
     @ApiOperation(value = "Actualizar un servicio", notes = "Actualiza todos los campos de un servicio")
     public GenericResponse updateServicio(@PathVariable int id, @RequestBody ServicioData servicioData) {
+        GenericResponse respuesta;
         if (!validarDatosPut(servicioData)) {
-            return new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
+            respuesta = new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
         } else {
             Servicio servicio = servicioRepository.findOne(id);
             if (servicio == null) {
-                return new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
+                respuesta = new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
             } else {
                 BeanUtils.copyProperties(servicioData, servicio);
                 AreaEspecializacion area = areaEspecializacionRepository.findOne(servicioData.getAreaId());
                 if (area == null) {
-                    return new GenericResponse(FAILED.getSecond(), AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst());
+                    respuesta = new GenericResponse(FAILED.getSecond(), AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst());
                 } else {
                     servicio.setAreaId(area);
                     servicioRepository.save(servicio);
-                    return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+                    respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
                 }
             }
         }
+
+        return respuesta;
     }
 }

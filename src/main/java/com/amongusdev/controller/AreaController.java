@@ -3,6 +3,7 @@ package com.amongusdev.controller;
 import com.amongusdev.controller.requestdata.AreaData;
 import com.amongusdev.exception.GenericResponse;
 import com.amongusdev.models.AreaEspecializacion;
+import com.amongusdev.models.Especialista;
 import com.amongusdev.repositories.AreaEspecializacionRepository;
 import com.amongusdev.repositories.EspecialistaRepository;
 import com.amongusdev.repositories.ServicioRepository;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.amongusdev.utils.Defines.*;
@@ -30,8 +33,13 @@ public class AreaController {
     EspecialistaRepository especialistaRepository;
 
     @GetMapping
-    public List<AreaEspecializacion> listarAreas() {
-        return areaEspecializacionRepository.findAll();
+    public ResponseEntity<Object> listarAreas() {
+        List<AreaEspecializacion> areas = areaEspecializacionRepository.findAll();
+
+        if(areas.size() != 0)
+            return new ResponseEntity<>(areas, HttpStatus.OK);
+
+        return new ResponseEntity<>(new GenericResponse(FAILED.getSecond(), NO_AREAS.getSecond(), NO_AREAS.getFirst()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -42,6 +50,22 @@ public class AreaController {
         } else {
             return new ResponseEntity<>(new GenericResponse(AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst()), HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/{id}/especialista/")
+    @ApiOperation(value = "Buscar un especialistas de un area", notes = "Busca los especialistas asociados a un area")
+    public ResponseEntity<Object> getAreaEspecialista(@PathVariable int id){
+        List<String> listaEspecialistas = areaEspecializacionRepository.findEspecialistasByArea(id);
+        List<Especialista> especialistas = new ArrayList<>();
+
+        for(int i = 0; i < listaEspecialistas.size(); i++){
+            especialistas.add(especialistaRepository.findOne(listaEspecialistas.get(i)));
+        }
+
+        if(listaEspecialistas.size() != 0)
+            return new ResponseEntity<>(especialistas, HttpStatus.OK);
+
+        return new ResponseEntity<>(new GenericResponse(FAILED.getSecond(), NO_AREAS.getSecond(), NO_AREAS.getFirst()), HttpStatus.OK);
     }
 
     private boolean validarDatosPost(AreaEspecializacion area) {
@@ -67,7 +91,7 @@ public class AreaController {
     public GenericResponse deleteArea(@PathVariable int id) {
         AreaEspecializacion area = areaEspecializacionRepository.findOne(id);
         if (area != null) {
-            List<Integer> listaServicios = servicioRepository.encontrarServiciosPorArea(area.getId());
+            List<Integer> listaServicios = servicioRepository.findByArea(area.getId());
             List<Integer> listaEspecialistas = especialistaRepository.encontrarEspecialistasPorArea(area.getId());
             if (listaServicios.size() == 0 && listaEspecialistas.size() == 0) {
                 areaEspecializacionRepository.delete(id);

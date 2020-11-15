@@ -32,6 +32,8 @@ public class Turno implements Serializable {
     private String horaInicio;
     @Column(name = "duracion")
     private Integer duracion;
+    @Column(name = "estado")
+    private boolean estado;
     @JoinColumn(name = "dia_agenda_id", referencedColumnName = "id")
     @ManyToOne
     private DiaAgenda diaAgendaId;
@@ -48,5 +50,6 @@ public class Turno implements Serializable {
         this.horaInicio = horaInicio;
         this.duracion = duracion;
         this.diaAgendaId = diaAgenda;
+        this.estado = false;
     }
 }

@@ -3,6 +3,7 @@ package com.amongusdev.controller;
 import com.amongusdev.controller.requestdata.CitaData;
 import com.amongusdev.exception.GenericResponse;
 import com.amongusdev.models.Cita;
+import com.amongusdev.models.Turno;
 import com.amongusdev.repositories.CitaRepository;
 import com.amongusdev.repositories.ClienteRepository;
 import com.amongusdev.repositories.ServicioRepository;
@@ -34,8 +35,13 @@ public class CitaController {
     ServicioRepository servicioRepository;
 
     @GetMapping
-    public List<Cita> listarCitas() {
-        return citaRepository.findAll();
+    public ResponseEntity<Object> listarCitas() {
+        List<Cita> citas = citaRepository.findAll();
+
+        if(citas.size() != 0)
+            return new ResponseEntity<>(citas, HttpStatus.OK);
+
+        return new ResponseEntity<>(new GenericResponse(FAILED.getSecond(), NO_CITAS.getSecond(), NO_CITAS.getFirst()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -50,33 +56,50 @@ public class CitaController {
 
     @GetMapping("/cliente/{cedula}")
     @ApiOperation(value = "Consultar citas de un cliente", notes = "Consulta todas las citas asociadas a un cliente")
-    public List<Cita> getCitaCliente(@PathVariable String cedula){
-        return citaRepository.buscarCitaCliente(cedula);
+    public ResponseEntity<Object> getCitaCliente(@PathVariable String cedula){
+        List<Cita> citasCliente = citaRepository.findByCliente(cedula);
+
+        if(citasCliente.size() != 0)
+            return new ResponseEntity<>(citasCliente, HttpStatus.OK);
+
+        return new ResponseEntity<>(new GenericResponse(FAILED.getSecond(), NO_CITAS.getSecond(), NO_AREAS.getFirst()), HttpStatus.OK);
+    }
+
+    private boolean validarDatos(CitaData citaData){
+        return citaData.getClienteCedula() != null && citaData.getTurnoId() != 0 && citaData.getServicioId() != 0;
     }
 
     @PostMapping()
     @ApiOperation(value = "Crear una cita", notes = "Se crea una cita con el respectivo ciente y turno")
     public GenericResponse createCita(@RequestBody CitaData citaData){
-        Cita cita = new Cita(clienteRepository.findOne(citaData.getClienteCedula()), turnoRepository.findOne(citaData.getTurnoId()), Calendar.getInstance().getTime(), servicioRepository.findOne(citaData.getServicioId()));
         GenericResponse respuesta;
 
-        if(cita.getClienteCedula() == null){
-            respuesta = new GenericResponse(FAILED.getSecond(), CUSTOMER_NOT_FOUND.getSecond(), CUSTOMER_NOT_FOUND.getFirst());
-        } else if(cita.getTurnoId() == null){
-            respuesta =  new GenericResponse(FAILED.getSecond(), TURNO_NOT_FOUND.getSecond(), TURNO_NOT_FOUND.getFirst());
-        } else if(cita.getServicioId() == null){
-            respuesta =  new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
-        } else{
-            if(citaRepository.verificarExistenciaCita(citaData.getClienteCedula(), citaData.getTurnoId()) == null){
-                if(citaRepository.buscarCitaPorTurno(citaData.getTurnoId()) == null){
-                    citaRepository.save(cita);
-                    respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
-                } else{
-                    respuesta = new GenericResponse(FAILED.getSecond(), TURNO_ASIGNADO.getSecond(), TURNO_ASIGNADO.getFirst());
-                }
+        if(validarDatos(citaData)){
+            Cita cita = new Cita(clienteRepository.findOne(citaData.getClienteCedula()), turnoRepository.findOne(citaData.getTurnoId()), Calendar.getInstance().getTime(), servicioRepository.findOne(citaData.getServicioId()));
+
+            if(cita.getClienteCedula() == null){
+                respuesta = new GenericResponse(FAILED.getSecond(), CUSTOMER_NOT_FOUND.getSecond(), CUSTOMER_NOT_FOUND.getFirst());
+            } else if(cita.getTurnoId() == null){
+                respuesta =  new GenericResponse(FAILED.getSecond(), TURNO_NOT_FOUND.getSecond(), TURNO_NOT_FOUND.getFirst());
+            } else if(cita.getServicioId() == null){
+                respuesta =  new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
             } else{
-                respuesta = new GenericResponse(FAILED.getSecond(), CITA_ALREADY_EXISTS.getSecond(), CITA_ALREADY_EXISTS.getFirst());
+                if(citaRepository.verificarExistenciaCita(citaData.getClienteCedula(), citaData.getTurnoId()) == null){
+                    if(!cita.getTurnoId().isEstado()){
+                        citaRepository.save(cita);
+                        Turno turno = cita.getTurnoId();
+                        turno.setEstado(true);
+                        turnoRepository.save(turno);
+                        respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+                    } else{
+                        respuesta = new GenericResponse(FAILED.getSecond(), TURNO_ASIGNADO.getSecond(), TURNO_ASIGNADO.getFirst());
+                    }
+                } else{
+                    respuesta = new GenericResponse(FAILED.getSecond(), CITA_ALREADY_EXISTS.getSecond(), CITA_ALREADY_EXISTS.getFirst());
+                }
             }
+        } else {
+            respuesta = new GenericResponse(FAILED.getSecond(), FALTAN_DATOS.getSecond(), FALTAN_DATOS.getFirst());
         }
 
         return respuesta;
@@ -87,6 +110,9 @@ public class CitaController {
     public GenericResponse deleteCita(@PathVariable int id){
         Cita cita = citaRepository.findOne(id);
         if (cita != null) {
+            Turno turno = cita.getTurnoId();
+            turno.setEstado(false);
+            turnoRepository.save(turno);
             citaRepository.delete(id);
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
         } else{
@@ -120,10 +146,6 @@ public class CitaController {
         } else{
             return new GenericResponse(FAILED.getSecond(), CITA_NOT_FOUND.getSecond(), CITA_NOT_FOUND.getFirst());
         }
-    }
-
-    private boolean validarDatos(CitaData citaData){
-        return citaData.getClienteCedula() != null && citaData.getTurnoId() != 0 && citaData.getServicioId() != 0;
     }
 
     @PutMapping("/{id}")

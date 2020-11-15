@@ -21,4 +21,8 @@ public class Defines {
     public static final Pair<Integer, String> TURNO_NOT_FOUND           = Pair.of(13, "El turno no se encuentra registrado");
     public static final Pair<Integer, String> CITA_ALREADY_EXISTS       = Pair.of(14, "La cita ya se encuentra registrada");
     public static final Pair<Integer, String> TURNO_ASIGNADO            = Pair.of(15, "El turno ya se encuentra asignado");
+    public static final Pair<Integer, String> NO_SERVICES               = Pair.of(16, "No se encuentran servicios registrados");
+    public static final Pair<Integer, String> NO_AREAS                  = Pair.of(17, "No se encuentran areas registradas");
+    public static final Pair<Integer, String> NO_CITAS                  = Pair.of(18, "No se encuentran citas registradas");
+    public static final Pair<Integer, String> NO_AGENDAS                = Pair.of(19, "No se encuentran agendas registradas");
 }
