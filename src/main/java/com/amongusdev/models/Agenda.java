@@ -5,7 +5,10 @@
  */
 package com.amongusdev.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,6 +32,8 @@ public class Agenda implements Serializable {
     private Integer mes;
     @Column(name = "anio")
     private Integer anio;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @OneToMany(mappedBy = "agendaId")
     private List<DiaAgenda> diaAgendaList;
     @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula")

@@ -5,7 +5,10 @@
  */
 package com.amongusdev.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,5 +37,18 @@ public class Cita implements Serializable {
     @JoinColumn(name = "turno_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Turno turnoId;
+    @JoinColumn(name = "servicio_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Servicio servicioId;
 
+    public Cita(){
+
+    }
+
+    public Cita(Cliente cliente, Turno turno, Date createTime, Servicio servicio){
+        this.clienteCedula = cliente;
+        this.turnoId = turno;
+        this.createTime = createTime;
+        this.servicioId = servicio;
+    }
 }

@@ -7,7 +7,6 @@ import com.amongusdev.models.Administrador;
 import com.amongusdev.models.Cliente;
 import com.amongusdev.models.Especialista;
 import com.amongusdev.models.Persona;
-import com.amongusdev.repositories.ClienteRepository;
 import com.amongusdev.repositories.PersonaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +14,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 @Service("userService")
 public class DefaultUserService implements UserService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
     @Autowired
     PersonaRepository personaRepository;
 
@@ -98,37 +98,39 @@ public class DefaultUserService implements UserService {
     public boolean partialUpdateUser(String cedula, PersonaData personaData){
         Persona persona = personaRepository.findOne(cedula);
 
-        if(persona == null){
-            return false;
-        } else{
-            if(personaData.getNombre() != null)
-                persona.setNombre(personaData.getNombre());
+        if(personaData.getNombre() != null)
+            persona.setNombre(personaData.getNombre());
 
-            if(personaData.getApellido() != null)
-                persona.setApellido(personaData.getApellido());
+        if(personaData.getApellido() != null)
+            persona.setApellido(personaData.getApellido());
 
-            if(personaData.getFechaNacimiento() != null)
-                persona.setFechaNacimiento(personaData.getFechaNacimiento());
-
-            if(personaData.getTelefono() != null)
-                persona.setTelefono(personaData.getTelefono());
-
-            if(personaData.getDireccion() != null)
-                persona.setDireccion(personaData.getDireccion());
-
-            if(personaData.getEmail() != null)
-                persona.setEmail(personaData.getEmail());
-
-            if(personaData.getPassword() != null)
-                persona.setPassword(passwordEncoder().encode(personaData.getPassword()));
-
-            if(personaData.getCedula() != null){
-                persona.setCedula(personaData.getCedula());
-                personaRepository.delete(cedula);
+        if(personaData.getFechaNacimiento() != null){
+            SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+            try{
+                persona.setFechaNacimiento(formato.parse(personaData.getFechaNacimiento()));
+            } catch(ParseException e){
+                return false;
             }
-            personaRepository.save(persona);
-            return true;
         }
+
+        if(personaData.getTelefono() != null)
+            persona.setTelefono(personaData.getTelefono());
+
+        if(personaData.getDireccion() != null)
+            persona.setDireccion(personaData.getDireccion());
+
+        if(personaData.getEmail() != null)
+            persona.setEmail(personaData.getEmail());
+
+        if(personaData.getPassword() != null)
+            persona.setPassword(passwordEncoder().encode(personaData.getPassword()));
+
+        if(personaData.getCedula() != null){
+            persona.setCedula(personaData.getCedula());
+            personaRepository.delete(cedula);
+        }
+        personaRepository.save(persona);
+        return true;
     }
 
     private boolean validarDatosPut(PersonaData personaData){
@@ -142,6 +144,12 @@ public class DefaultUserService implements UserService {
             Persona persona = personaRepository.findOne(cedula);
             BeanUtils.copyProperties(personaData, persona);
             persona.setCedula(cedula);
+            SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+            try{
+                persona.setFechaNacimiento(formato.parse(personaData.getFechaNacimiento()));
+            } catch(ParseException e){
+                return false;
+            }
             persona.setPassword(passwordEncoder().encode(personaData.getPassword()));
             personaRepository.save(persona);
             return true;

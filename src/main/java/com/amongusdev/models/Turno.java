@@ -5,7 +5,10 @@
  */
 package com.amongusdev.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -32,6 +35,8 @@ public class Turno implements Serializable {
     @JoinColumn(name = "dia_agenda_id", referencedColumnName = "id")
     @ManyToOne
     private DiaAgenda diaAgendaId;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "turnoId")
     private List<Cita> citaList;
 
