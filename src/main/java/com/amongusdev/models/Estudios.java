@@ -5,7 +5,10 @@
  */
 package com.amongusdev.models;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,6 +28,8 @@ public class Estudios implements Serializable {
     private Integer id;
     @Column(name = "titulo")
     private String titulo;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @JoinColumn(name = "especialista_cedula", referencedColumnName = "especialista_cedula")
     @ManyToOne
     private HojaVida especialistaCedula;
