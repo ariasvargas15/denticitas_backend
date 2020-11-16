@@ -35,7 +35,7 @@ public class DiaAgenda implements Serializable {
     private Agenda agendaId;
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
-    @OneToMany(mappedBy = "diaAgendaId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "diaAgendaId")
     private List<Turno> turnoList;
 
     public DiaAgenda(){

@@ -34,7 +34,7 @@ public class Agenda implements Serializable {
     private Integer anio;
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
-    @OneToMany(mappedBy = "agendaId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "agendaId")
     private List<DiaAgenda> diaAgendaList;
     @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula")
     @ManyToOne

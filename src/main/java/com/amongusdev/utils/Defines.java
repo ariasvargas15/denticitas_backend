@@ -25,4 +25,6 @@ public class Defines {
     public static final Pair<Integer, String> NO_AREAS                  = Pair.of(17, "No se encuentran areas registradas");
     public static final Pair<Integer, String> NO_CITAS                  = Pair.of(18, "No se encuentran citas registradas");
     public static final Pair<Integer, String> NO_AGENDAS                = Pair.of(19, "No se encuentran agendas registradas");
+    public static final Pair<Integer, String> DIA_AGENDA_NOT_FOUND      = Pair.of(20, "El dia de la agenda no se encuentra registrado");
+    public static final Pair<Integer, String> AGENDA_NOT_FOUND          = Pair.of(21, "La agenda no se encuentra registrada");
 }

@@ -124,22 +124,30 @@ public class CitaController {
     @ApiOperation(value = "Actualizar parcialmente una cita", notes = "Actualiza algunos campos especificados de una cita")
     public GenericResponse partialUpdateCita(@PathVariable int id, @RequestBody CitaData citaData){
         Cita cita = citaRepository.findOne(id);
+        int turnoActual;
 
         if(cita != null){
             if(citaData.getClienteCedula() != null)
-                if(clienteRepository.findOne(citaData.getClienteCedula()) != null)
-                    cita.setClienteCedula(clienteRepository.findOne(citaData.getClienteCedula()));
+                cita.setClienteCedula(clienteRepository.findOne(citaData.getClienteCedula()));
+                if(cita.getClienteCedula() == null)
+                    return new GenericResponse(FAILED.getSecond(), CUSTOMER_NOT_FOUND.getSecond(), CUSTOMER_NOT_FOUND.getFirst());
 
-            if(citaData.getTurnoId() != 0 && citaData.getTurnoId() != cita.getTurnoId().getId() && turnoRepository.findOne(citaData.getTurnoId()) != null){
-                if(citaRepository.buscarCitaPorTurno(citaData.getTurnoId()) == null){
-                    cita.setTurnoId(turnoRepository.findOne(citaData.getTurnoId()));
+            if(citaData.getTurnoId() != 0 && citaData.getTurnoId() != cita.getTurnoId().getId()){
+                turnoActual = cita.getTurnoId().getId();
+                cita.setTurnoId(turnoRepository.findOne(citaData.getTurnoId()));
+                if(cita.getTurnoId() != null){
+                    if (cambiarEstadoTurno(turnoActual, cita))
+                        return new GenericResponse(FAILED.getSecond(), TURNO_ASIGNADO.getSecond(), TURNO_ASIGNADO.getFirst());
                 } else{
-                    return new GenericResponse(FAILED.getSecond(), TURNO_ASIGNADO.getSecond(), TURNO_ASIGNADO.getFirst());
+                    return new GenericResponse(FAILED.getSecond(), TURNO_NOT_FOUND.getSecond(), TURNO_NOT_FOUND.getFirst());
                 }
             }
 
-            if(citaData.getServicioId() != 0 && servicioRepository.findOne(citaData.getServicioId()) != null)
+            if(citaData.getServicioId() != 0){
                 cita.setServicioId(servicioRepository.findOne(citaData.getServicioId()));
+                if(servicioRepository.findOne(citaData.getServicioId()) == null)
+                    return new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
+            }
 
             citaRepository.save(cita);
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
@@ -152,6 +160,8 @@ public class CitaController {
     @ApiOperation(value = "Actualizar una cita", notes = "Actualizar todos los campos de una cita")
     public GenericResponse updateCita(@PathVariable int id, @RequestBody CitaData citaData){
         GenericResponse respuesta;
+        int turnoActual;
+        
         if(validarDatos(citaData)){
             Cita cita = citaRepository.findOne(id);
             if(cita != null){
@@ -169,6 +179,10 @@ public class CitaController {
                         if(cita.getTurnoId() == null){
                             respuesta = new GenericResponse(FAILED.getSecond(), TURNO_NOT_FOUND.getSecond(), TURNO_NOT_FOUND.getFirst());
                         } else{
+                            turnoActual = cita.getTurnoId().getId();
+                            if (cambiarEstadoTurno(turnoActual, cita))
+                                return new GenericResponse(FAILED.getSecond(), TURNO_ASIGNADO.getSecond(), TURNO_ASIGNADO.getFirst());
+
                             if(citaRepository.buscarCitaPorTurno(citaData.getTurnoId()) == null){
                                 citaRepository.save(cita);
                                 respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
@@ -186,5 +200,19 @@ public class CitaController {
         }
 
         return respuesta;
+    }
+
+    private boolean cambiarEstadoTurno(int turnoActual, Cita cita) {
+        if(cita.getTurnoId().isEstado()){
+            return true;
+        } else{
+            Turno turno = cita.getTurnoId();
+            turno.setEstado(true);
+            turnoRepository.save(turno);
+            turno = turnoRepository.findOne(turnoActual);
+            turno.setEstado(false);
+            turnoRepository.save(turno);
+        }
+        return false;
     }
 }

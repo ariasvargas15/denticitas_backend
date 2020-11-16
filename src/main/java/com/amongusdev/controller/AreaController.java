@@ -52,7 +52,7 @@ public class AreaController {
         }
     }
 
-    @GetMapping("/{id}/especialista/")
+    @GetMapping("/{id}/especialista")
     @ApiOperation(value = "Buscar un especialistas de un area", notes = "Busca los especialistas asociados a un area")
     public ResponseEntity<Object> getAreaEspecialista(@PathVariable int id){
         List<String> listaEspecialistas = areaEspecializacionRepository.findEspecialistasByArea(id);

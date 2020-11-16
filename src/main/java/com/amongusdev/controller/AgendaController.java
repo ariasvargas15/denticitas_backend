@@ -21,7 +21,6 @@ import static com.amongusdev.utils.Defines.*;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -120,5 +119,44 @@ public class AgendaController {
                 turno = createTurno(turnos[i].substring(2, 6), Integer.parseInt(turnos[i].substring(6, 8)), diaAgenda);
             }
         }
+    }
+
+    @DeleteMapping("agenda/{agendaId}")
+    @ApiOperation(value = "Eliminar una agenda", notes = "Elimina una agenda completa")
+    public GenericResponse deleteAgenda(@PathVariable int agendaId){
+        Agenda agenda = agendaRepository.findOne(agendaId);
+
+        if(agenda == null){
+            return new GenericResponse(FAILED.getSecond(), AGENDA_NOT_FOUND.getSecond(), AGENDA_NOT_FOUND.getFirst());
+        }
+
+        agendaRepository.delete(agendaId);
+        return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+    }
+
+    @DeleteMapping("agenda/dia/{diaAgendaId}")
+    @ApiOperation(value = "Eliminar un dia de una agenda", notes = "Elimina un dia con todos sus turnos")
+    public GenericResponse deleteDiaAgenda(@PathVariable int diaAgendaId){
+        DiaAgenda diaAgenda = diaAgendaRepository.findOne(diaAgendaId);
+
+        if(diaAgenda == null){
+            return new GenericResponse(FAILED.getSecond(), DIA_AGENDA_NOT_FOUND.getSecond(), DIA_AGENDA_NOT_FOUND.getFirst());
+        }
+
+        diaAgendaRepository.delete(diaAgendaId);
+        return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+    }
+
+    @DeleteMapping("agenda/turno/{turnoId}")
+    @ApiOperation(value = "Eliminar un turno", notes = "Elimina un turno asociado a un id dado")
+    public GenericResponse deleteTurno(@PathVariable int turnoId){
+        Turno turno = turnoRepository.findOne(turnoId);
+
+        if(turno == null){
+            return new GenericResponse(FAILED.getSecond(), TURNO_NOT_FOUND.getSecond(), TURNO_ALREADY_EXISTS.getFirst());
+        }
+
+        turnoRepository.delete(turnoId);
+        return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
     }
 }
