@@ -3,9 +3,6 @@ package com.amongusdev.controller.user;
 import com.amongusdev.controller.requestdata.PersonaData;
 import com.amongusdev.exception.UnknownIdentifierException;
 import com.amongusdev.exception.UserAlreadyExistException;
-import com.amongusdev.models.Administrador;
-import com.amongusdev.models.Cliente;
-import com.amongusdev.models.Especialista;
 import com.amongusdev.models.Persona;
 import com.amongusdev.repositories.PersonaRepository;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 @Service("userService")
 public class DefaultUserService implements UserService {
@@ -33,6 +29,7 @@ public class DefaultUserService implements UserService {
         Persona persona = new Persona();
         BeanUtils.copyProperties(user, persona);
         persona.setCreateTime(Calendar.getInstance().getTime());
+        persona.setActivo(true);
         encodePassword(persona, user);
         return personaRepository.save(persona);
     }
@@ -56,34 +53,14 @@ public class DefaultUserService implements UserService {
     public boolean login(final UserData user) {
         Persona p = personaRepository.findOne(user.getCedula());
         if (p != null) {
-            return validarTipoUsuario(user.getTipo(), p) && passwordEncoder().matches(user.getPassword(), p.getPassword());
+            return validarTipoUsuario(user.getRol(), p) && passwordEncoder().matches(user.getPassword(), p.getPassword());
         } else {
             return false;
         }
     }
 
     private boolean validarTipoUsuario(String tipo, Persona p) {
-        boolean res = true;
-        switch (tipo) {
-            case "cliente":
-                if (!(p.obtenerTipoPersona() instanceof Cliente)) {
-                    res = false;
-                }
-                break;
-            case "especialista":
-                if (!(p.obtenerTipoPersona() instanceof Especialista)) {
-                    res = false;
-                }
-                break;
-            case "admin":
-                if (!(p.obtenerTipoPersona() instanceof Administrador)) {
-                    res = false;
-                }
-                break;
-            default:
-                res = false;
-        }
-        return res;
+        return (p.getRol().equalsIgnoreCase(tipo));
     }
 
     private void encodePassword(Persona persona, UserData user) {

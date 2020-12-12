@@ -12,5 +12,7 @@ public class ServicioData implements Serializable {
     private String imagen;
     private int areaId;
     private double precio;
+    private int duracion;
+    private Boolean estado;
 
 }

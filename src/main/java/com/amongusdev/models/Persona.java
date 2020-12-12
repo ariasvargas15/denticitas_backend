@@ -45,6 +45,10 @@ public class Persona implements Serializable {
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
+    @Column(name = "rol")
+    private String rol;
+    @Column(name = "activo")
+    private boolean activo;
 
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
@@ -53,16 +57,11 @@ public class Persona implements Serializable {
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
-    private Administrador administrador;
-    @Getter(AccessLevel.NONE)
-    @ToString.Exclude
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
     private Especialista especialista;
 
     public Object obtenerTipoPersona(){
         if(cliente!=null) return cliente;
         if(especialista!=null) return especialista;
-        if(administrador!=null) return administrador;
         return null;
     }
 

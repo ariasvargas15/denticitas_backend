@@ -33,8 +33,10 @@ public class HojaVida implements Serializable {
     private String universidadPregrado;
     @Column(name = "licencia")
     private String licencia;
-    @OneToMany(mappedBy = "especialistaCedula")
-    private List<Estudios> estudiosList;
+    @Column(name = "curriculum")
+    private String curriculum;
+    @Column(name = "experiencia")
+    private Integer experiencia;
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
     @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula", insertable = false, updatable = false)

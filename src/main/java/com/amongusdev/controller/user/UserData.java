@@ -15,6 +15,6 @@ public class UserData implements Serializable {
     private String password;
 
     @NotEmpty(message = "{registration.validation.tipo}")
-    private String tipo;
+    private String rol;
 
 }

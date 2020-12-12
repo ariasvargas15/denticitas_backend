@@ -85,10 +85,10 @@ public class CitaController {
                 respuesta =  new GenericResponse(FAILED.getSecond(), SERVICE_NOT_FOUND.getSecond(), SERVICE_NOT_FOUND.getFirst());
             } else{
                 if(citaRepository.verificarExistenciaCita(citaData.getClienteCedula(), citaData.getTurnoId()) == null){
-                    if(!cita.getTurnoId().isEstado()){
+                    if(!cita.getTurnoId().isDisponible()){
                         citaRepository.save(cita);
                         Turno turno = cita.getTurnoId();
-                        turno.setEstado(true);
+                        turno.setDisponible(true);
                         turnoRepository.save(turno);
                         respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
                     } else{
@@ -111,7 +111,7 @@ public class CitaController {
         Cita cita = citaRepository.findOne(id);
         if (cita != null) {
             Turno turno = cita.getTurnoId();
-            turno.setEstado(false);
+            turno.setDisponible(false);
             turnoRepository.save(turno);
             citaRepository.delete(id);
             return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
@@ -203,14 +203,14 @@ public class CitaController {
     }
 
     private boolean cambiarEstadoTurno(int turnoActual, Cita cita) {
-        if(cita.getTurnoId().isEstado()){
+        if(cita.getTurnoId().isDisponible()){
             return true;
         } else{
             Turno turno = cita.getTurnoId();
-            turno.setEstado(true);
+            turno.setDisponible(true);
             turnoRepository.save(turno);
             turno = turnoRepository.findOne(turnoActual);
-            turno.setEstado(false);
+            turno.setDisponible(false);
             turnoRepository.save(turno);
         }
         return false;

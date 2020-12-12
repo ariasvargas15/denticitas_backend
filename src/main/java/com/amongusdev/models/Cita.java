@@ -13,6 +13,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author bsav157
@@ -40,6 +41,8 @@ public class Cita implements Serializable {
     @JoinColumn(name = "servicio_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Servicio servicioId;
+    @OneToMany(mappedBy = "cita")
+    private List<Evolucion> evolucionList;
 
     public Cita(){
 

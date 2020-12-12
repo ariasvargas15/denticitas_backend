@@ -41,6 +41,10 @@ public class Servicio implements Serializable {
     @JoinColumn(name = "area_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private AreaEspecializacion areaId;
+    @Column(name = "duracion")
+    private Integer duracion;
+    @Column(name = "estado")
+    private boolean estado;
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicioId")

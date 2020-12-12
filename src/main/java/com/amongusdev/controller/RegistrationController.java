@@ -29,12 +29,12 @@ public class RegistrationController {
     @PostMapping("/registro")
     public GenericResponse registerUserAccount(@RequestBody UserData userData) {
         try {
-            if (userData.getTipo().equals("cliente")) {
+            if (userData.getRol().equals("cliente")) {
                 Persona p = userService.register(userData);
                 Cliente c = new Cliente();
                 BeanUtils.copyProperties(p, c);
                 clienteRepository.save(c);
-            } else if (userData.getTipo().equals("especialista")) {
+            } else if (userData.getRol().equals("especialista")) {
                 Persona p = userService.register(userData);
                 Especialista e = new Especialista();
                 BeanUtils.copyProperties(p, e);

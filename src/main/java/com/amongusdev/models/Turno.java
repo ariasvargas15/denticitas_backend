@@ -32,11 +32,13 @@ public class Turno implements Serializable {
     private String horaInicio;
     @Column(name = "duracion")
     private Integer duracion;
-    @Column(name = "estado")
-    private boolean estado;
+    @Column(name = "disponible")
+    private boolean disponible;
     @JoinColumn(name = "dia_agenda_id", referencedColumnName = "id")
     @ManyToOne
     private DiaAgenda diaAgendaId;
+    @Column(name = "tiempo_disponible")
+    private Integer tiempoDisponible;
     @Getter(AccessLevel.NONE)
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "turnoId")
@@ -50,6 +52,6 @@ public class Turno implements Serializable {
         this.horaInicio = horaInicio;
         this.duracion = duracion;
         this.diaAgendaId = diaAgenda;
-        this.estado = false;
+        this.disponible = false;
     }
 }

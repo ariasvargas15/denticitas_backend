@@ -80,8 +80,8 @@ public class EspecialistaController {
                         return new GenericResponse(FAILED.getSecond(), AREA_NOT_FOUND.getSecond(), AREA_NOT_FOUND.getFirst());
                     }
 
-                    if(areaEspecializacionRepository.encontrarAreaConEspecialista(area.getId(), cedula) != null)
-                        especialistaRepository.deleteAreasEspecialista(area.getId(), cedula);
+                    //if(areaEspecializacionRepository.encontrarAreaConEspecialista(area.getId(), cedula) != null)
+                      //  especialistaRepository.deleteAreasEspecialista(area.getId(), cedula);
 
                     especialistaRepository.createAreasEspecialista(area.getId(), cedula);
                 }

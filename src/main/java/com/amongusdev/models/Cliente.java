@@ -36,5 +36,7 @@ public class Cliente implements Serializable {
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clienteCedula")
     private List<Cita> citaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "cliente")
+    private HistoriaClinica historiaClinica;
 
 }
