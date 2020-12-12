@@ -48,10 +48,11 @@ public class Turno implements Serializable {
 
     }
 
-    public Turno(String horaInicio, int duracion, DiaAgenda diaAgenda){
+    public Turno(String horaInicio, DiaAgenda diaAgenda){
         this.horaInicio = horaInicio;
-        this.duracion = duracion;
+        this.duracion = 120;
         this.diaAgendaId = diaAgenda;
-        this.disponible = false;
+        this.disponible = true;
+        this.tiempoDisponible = 120;
     }
 }

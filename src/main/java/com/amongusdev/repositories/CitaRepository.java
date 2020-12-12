@@ -2,8 +2,10 @@ package com.amongusdev.repositories;
 
 import com.amongusdev.models.Cita;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,7 +15,12 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     Cita verificarExistenciaCita(String clienteCedula, int turnoId);
 
     @Query(value = "SELECT * FROM cita WHERE turno_id = ?1", nativeQuery = true)
-    Cita buscarCitaPorTurno(int turnoId);
+    List<Cita> findByTurno(int turnoId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM cita WHERE turno_id = ?1", nativeQuery = true)
+    void deleteByTurno(int turnoId);
 
     @Query(value = "SELECT * FROM cita WHERE cliente_cedula = ?1", nativeQuery = true)
     List<Cita> findByCliente(String clienteCedula);

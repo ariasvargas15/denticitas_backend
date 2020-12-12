@@ -183,7 +183,7 @@ public class CitaController {
                             if (cambiarEstadoTurno(turnoActual, cita))
                                 return new GenericResponse(FAILED.getSecond(), TURNO_ASIGNADO.getSecond(), TURNO_ASIGNADO.getFirst());
 
-                            if(citaRepository.buscarCitaPorTurno(citaData.getTurnoId()) == null){
+                            if(citaRepository.findByTurno(citaData.getTurnoId()) == null){
                                 citaRepository.save(cita);
                                 respuesta = new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
                             } else{

@@ -10,6 +10,7 @@ public class TurnoData implements Serializable {
     private int id;
     private String horaInicio;
     private Integer duracion;
-    private boolean estado;
+    private boolean disponible;
+    private Integer tiempoDisponible;
 
 }
