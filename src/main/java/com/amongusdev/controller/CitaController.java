@@ -20,6 +20,7 @@ import java.util.List;
 import static com.amongusdev.utils.Defines.*;
 
 @RestController
+@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PATCH,RequestMethod.PUT})
 @RequestMapping("/cita")
 public class CitaController {
     @Autowired
