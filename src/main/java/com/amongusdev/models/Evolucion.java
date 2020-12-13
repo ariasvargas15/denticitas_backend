@@ -20,6 +20,7 @@ public class Evolucion implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Column(name = "fecha")
+    @Temporal(TemporalType.DATE)
     private Date fecha;
     @Column(name = "descripcion")
     private String descripcion;
@@ -34,6 +35,8 @@ public class Evolucion implements Serializable {
     @JoinColumn(name = "id_historia", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private HistoriaClinica historiaClinica;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @JoinColumn(name = "id_cita", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Cita cita;
