@@ -84,10 +84,10 @@ public class HistoriaClinicaController {
         return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
     }
 
-    @GetMapping("/historiaclinica/{cedulaCliente}/evolucion")
+    @GetMapping("/historiaclinica/evolucion")
     public List<Evolucion> listarEvolucion() {
         return evolucionRepository.findAll();
     }
 
-
+    @GetMapping("/historiaclinica/{cedulaCliente}/evolucion")
 }
