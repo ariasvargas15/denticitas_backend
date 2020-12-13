@@ -88,6 +88,4 @@ public class HistoriaClinicaController {
     public List<Evolucion> listarEvolucion() {
         return evolucionRepository.findAll();
     }
-
-    @GetMapping("/historiaclinica/{cedulaCliente}/evolucion")
 }
