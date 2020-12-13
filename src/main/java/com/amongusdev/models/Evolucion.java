@@ -25,6 +25,12 @@ public class Evolucion implements Serializable {
     private String descripcion;
     @Column(name = "imagen")
     private String imagen;
+    @Column(name = "id_historia")
+    private Integer idHistoria;
+    @Column(name = "id_cita")
+    private Integer idCita;
+    @Getter(AccessLevel.NONE)
+    @ToString.Exclude
     @JoinColumn(name = "id_historia", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private HistoriaClinica historiaClinica;

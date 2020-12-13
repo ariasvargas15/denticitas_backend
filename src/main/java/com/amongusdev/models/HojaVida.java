@@ -42,4 +42,12 @@ public class HojaVida implements Serializable {
     @JoinColumn(name = "especialista_cedula", referencedColumnName = "cedula", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Especialista especialista;
+
+    public HojaVida(){
+
+    }
+
+    public HojaVida(String especialistaCedula){
+        this.especialistaCedula = especialistaCedula;
+    }
 }

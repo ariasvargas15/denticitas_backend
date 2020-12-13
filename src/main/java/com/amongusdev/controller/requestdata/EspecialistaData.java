@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 public class EspecialistaData implements Serializable {
 
-    private List<AreaEspecializacion> areaEspecializacionList;
+    private List<AreaData> areaEspecializacionList;
     private PersonaData persona;
-    private HojaVida hojaVida;
+    private HojaVidaData hojaVidaData;
 
 }

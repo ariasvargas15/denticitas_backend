@@ -4,11 +4,11 @@ import com.amongusdev.controller.user.UserData;
 import com.amongusdev.controller.user.UserService;
 import com.amongusdev.exception.GenericResponse;
 import com.amongusdev.exception.UserAlreadyExistException;
-import com.amongusdev.models.Cliente;
-import com.amongusdev.models.Especialista;
-import com.amongusdev.models.Persona;
+import com.amongusdev.models.*;
 import com.amongusdev.repositories.ClienteRepository;
 import com.amongusdev.repositories.EspecialistaRepository;
+import com.amongusdev.repositories.HistoriaClinicaRepository;
+import com.amongusdev.repositories.HojaVidaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +25,12 @@ public class RegistrationController {
     @Autowired
     private EspecialistaRepository especialistaRepository;
 
+    @Autowired
+    private HojaVidaRepository hojaVidaRepository;
+
+    @Autowired
+    private HistoriaClinicaRepository historiaClinicaRepository;
+
     @PostMapping("/registro")
     public GenericResponse registerUserAccount(@RequestBody UserData userData) {
         try {
@@ -33,11 +39,15 @@ public class RegistrationController {
                 Cliente c = new Cliente();
                 BeanUtils.copyProperties(p, c);
                 clienteRepository.save(c);
+                HistoriaClinica historiaClinica = new HistoriaClinica(p.getCedula());
+                historiaClinicaRepository.save(historiaClinica);
             } else if (userData.getRol().equals("especialista")) {
                 Persona p = userService.register(userData);
                 Especialista e = new Especialista();
                 BeanUtils.copyProperties(p, e);
                 especialistaRepository.save(e);
+                HojaVida hojaVida = new HojaVida(p.getCedula());
+                hojaVidaRepository.save(hojaVida);
             } else {
                 return new GenericResponse(FAILED.getSecond(), INCORRECT_USER_TYPE.getSecond(), INCORRECT_USER_TYPE.getFirst());
             }

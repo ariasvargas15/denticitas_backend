@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,15 @@ public interface AreaEspecializacionRepository extends JpaRepository<AreaEspecia
     List<String> findEspecialistasByArea(int areaId);
 
     @Modifying
-    @Query(value = "SELECT area_id FROM especialista_has_area_especializacion WHERE area_id = ?1 AND especialista_cedula = ?2", nativeQuery = true)
-    AreaEspecializacion encontrarAreaConEspecialista(int id, String especialistaCedula);
+    @Transactional
+    @Query(value = "INSERT INTO especialista_has_area_especializacion (area_id, especialista_cedula) VALUES (?1, ?2)", nativeQuery = true)
+    void insertarAreaEspecialista(int areaId, String cedulaEspecialista);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM especialista_has_area_especializacion WHERE area_id = ?1 AND especialista_cedula = ?2", nativeQuery = true)
+    void deleteAreaEspecialista(int areaId, String cedulaEspecialista);
+
+    @Query(value = "SELECT * FROM especialista_has_area_especializacion WHERE area_id = ?1 AND especialista_cedula = ?2", nativeQuery = true)
+    List<Object> encontrarAreaConEspecialista(int id, String especialistaCedula);
 }

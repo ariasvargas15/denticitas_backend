@@ -106,6 +106,13 @@ public class DefaultUserService implements UserService {
             persona.setCedula(personaData.getCedula());
             personaRepository.delete(cedula);
         }
+
+        if(personaData.getRol() != null)
+            persona.setRol(personaData.getRol());
+
+        if(personaData.getActivo() != null)
+            persona.setActivo(personaData.getActivo());
+
         personaRepository.save(persona);
         return true;
     }

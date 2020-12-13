@@ -15,5 +15,7 @@ public class PersonaData implements Serializable {
     private String email;
     private String cedula;
     private String password;
+    private String rol;
+    private Boolean activo;
 
 }
