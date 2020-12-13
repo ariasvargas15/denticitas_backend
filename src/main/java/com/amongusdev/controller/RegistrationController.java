@@ -5,10 +5,7 @@ import com.amongusdev.controller.user.UserService;
 import com.amongusdev.exception.GenericResponse;
 import com.amongusdev.exception.UserAlreadyExistException;
 import com.amongusdev.models.*;
-import com.amongusdev.repositories.ClienteRepository;
-import com.amongusdev.repositories.EspecialistaRepository;
-import com.amongusdev.repositories.HistoriaClinicaRepository;
-import com.amongusdev.repositories.HojaVidaRepository;
+import com.amongusdev.repositories.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +28,9 @@ public class RegistrationController {
     @Autowired
     private HistoriaClinicaRepository historiaClinicaRepository;
 
+    @Autowired
+    private AreaEspecializacionRepository areaEspecializacionRepository;
+
     @PostMapping("/registro")
     public GenericResponse registerUserAccount(@RequestBody UserData userData) {
         try {
@@ -46,6 +46,7 @@ public class RegistrationController {
                 Especialista e = new Especialista();
                 BeanUtils.copyProperties(p, e);
                 especialistaRepository.save(e);
+                areaEspecializacionRepository.insertarAreaEspecialista(7, e.getCedula());
                 HojaVida hojaVida = new HojaVida(p.getCedula());
                 hojaVidaRepository.save(hojaVida);
             } else {

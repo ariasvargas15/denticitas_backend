@@ -71,11 +71,16 @@ public class CitaController {
         }
 
         List<Cita> citas = citaRepository.findByTurno(cita.getTurnoId().getId());
+        List<Cita> citasEmergencia = citaRepository.findByTurnoAndAndServicioEmergencia(cita.getTurnoId().getId());
         String turno = "Turno No. ";
+        int contador = citasEmergencia.size();
 
         for(int i = 0; i < citas.size(); i++){
+            if(citas.get(i).getServicioId().getId() > 26 || citas.get(i).getServicioId().getId() < 26){
+                contador++;
+            }
             if(citas.get(i).getId() == cita.getId()){
-                turno += (i+1);
+                turno += (contador);
                 i = citas.size();
             }
         }
@@ -142,6 +147,11 @@ public class CitaController {
             if(citaRepository.verificarExistenciaCita(citaData.getClienteCedula(), citaData.getTurnoId(), citaData.getServicioId()) == null){
                 Turno turno = cita.getTurnoId();
                 Servicio servicio = cita.getServicioId();
+
+                if(servicio.getId() == 26){
+                    citaRepository.save(cita);
+                    return new GenericResponse(SUCCESS.getSecond(), SUCCESS.getFirst());
+                }
 
                 if(turno.isDisponible() && turno.getTiempoDisponible() - servicio.getDuracion() >= 0){
                     citaRepository.save(cita);

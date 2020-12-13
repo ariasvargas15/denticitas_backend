@@ -17,6 +17,9 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     @Query(value = "SELECT * FROM cita WHERE turno_id = ?1", nativeQuery = true)
     List<Cita> findByTurno(int turnoId);
 
+    @Query(value = "SELECT * FROM cita WHERE turno_id = ?1 AND servicio_id = 26", nativeQuery = true)
+    List<Cita> findByTurnoAndAndServicioEmergencia(int turnoId);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM cita WHERE turno_id = ?1", nativeQuery = true)
